@@ -131,8 +131,8 @@
     {
       "mark": {
         "type": "text",
-        "fontSize": 10,
-        "dy": -5 
+        "fontSize": 11,
+        "dy": -10 
       },
       "encoding": {
         "x": { "field": "Year" },
