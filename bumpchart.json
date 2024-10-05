@@ -1,0 +1,156 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Death Rate Rankings of Countries Over Time",
+  "width": 690,
+  "height": 400,
+  "data": {
+    "url": "death_global_long.json",
+    "format": { "type": "json" }
+  },
+  "transform": [
+    {
+      "calculate": "split(datum.Year, ' ')[0]",
+      "as": "Year"
+    },
+    {
+      "calculate": "parseInt(datum.Year, 10)",
+      "as": "YearNum"
+    },
+    {
+      "filter": "datum.YearNum === 1981 || datum.YearNum === 1991 || datum.YearNum === 2001 || datum.YearNum === 2011 || datum.YearNum === 2021"
+    },
+    {
+      "filter": "datum.Rank <= sliderK"
+    }
+  ],
+  "params": [
+    {
+      "name": "sliderK",
+      "value": 8,
+      "bind": {
+        "input": "range",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "name": "Top K Rankings: "
+      }
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3,
+        "opacity": 0.7
+      },
+      "encoding": {
+        "x": {
+          "field": "Year",
+          "type": "ordinal",
+          "title": "Year",
+          "axis": {
+            "labelAngle": 0,
+            "labelFontSize": 12,
+            "titleFontSize": 14,
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "Rank",
+          "type": "quantitative",
+          "title": "Rank",
+          "scale": {
+            "domain": ["Brunei Darussalam", "Cambodia", "Indonesia", "Lao PDR", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand"],
+            "zero": false
+          },
+          "axis": {
+            "title": "Rank",
+            "grid": false,
+            "tickMinStep": 1,
+            "values": { "expr": "sequence(1, sliderK + 0.3)" },
+            "format": "d"
+          }
+        },
+        "color": {
+          "field": "Country Name",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Brunei Darussalam", "Cambodia", "Indonesia", "Lao PDR", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand"],
+            "range": ["yellow", "#ff7f0e", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "pink", "#17becf"]
+          },
+          "legend": { "title": "Country" }
+        },
+        "detail": { "field": "Country Name" },
+        "tooltip": [
+          { "field": "Country Name", "type": "nominal", "title": "Country" },
+          { "field": "Year", "type": "ordinal", "title": "Year" },
+          { "field": "Rank", "type": "quantitative", "title": "Rank" }
+        ]
+      },
+      "params": [
+        {
+          "name": "selectCountry",
+          "select": { "type": "point", "fields": ["Country Name"] }
+        }
+      ]
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 100 
+      },
+      "encoding": {
+        "x": {
+          "field": "Year",
+          "type": "ordinal"
+        },
+        "y": {
+          "field": "Rank",
+          "type": "quantitative",
+          "scale": {
+            "domain": { "expr": "[0, sliderK + 1]" },
+            "reverse": true
+          }
+        },
+        "color": {
+          "field": "Country Name",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Brunei Darussalam", "Cambodia", "Indonesia", "Lao PDR", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand"],
+            "range": ["yellow", "#ff7f0e", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "pink", "#17becf"]
+          }
+        },
+        "tooltip": [
+          { "field": "Country Name", "type": "nominal", "title": "Country" },
+          { "field": "Year", "type": "ordinal", "title": "Year" },
+          { "field": "Rank", "type": "quantitative", "title": "Rank" }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "fontSize": 10,
+        "dy": -5 
+      },
+      "encoding": {
+        "x": { "field": "Year" },
+        "y": {
+          "field": "Rank",
+          "type": "quantitative",
+          "scale": {
+            "domain": { "expr": "[0, sliderK + 1]" },
+            "reverse": true
+          }
+        },
+        "text": { "field": "Country Name" },
+        "tooltip": [
+          { "field": "Country Name", "type": "nominal", "title": "Country" },
+          { "field": "Year", "type": "ordinal", "title": "Year" },
+          { "field": "Rank", "type": "quantitative", "title": "Rank" }
+        ]
+      }
+    }
+  ]
+}
